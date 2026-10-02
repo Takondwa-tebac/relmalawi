@@ -11,7 +11,7 @@
             <span className="flex items-center gap-5"
                 ><span className="flex items-center gap-2 text-[#e4bc19]">
                     Regulated by MAGLA </span
-                ><span>Est. 2026</span>
+                ><span>Est. 2024</span>
             </span>
         </div>
     </footer>

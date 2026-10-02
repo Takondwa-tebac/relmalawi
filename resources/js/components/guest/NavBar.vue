@@ -18,10 +18,9 @@ const page = usePage();
     <div
         className="bg-[#e4bc19] px-6 py-2 text-center text-[11px] font-bold uppercase tracking-[0.14em] text-[#073b2a] sm:px-10"
     >
-        <!-- <marquee> -->
         REL is building the infrastructure behind Malawi&apos;s next media
         Games.
-        <!-- </marquee> -->
+        
         <Link href="/about" className="ml-2 underline underline-offset-4"
             >Read our story</Link
         >

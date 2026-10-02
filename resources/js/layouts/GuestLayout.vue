@@ -1,6 +1,7 @@
 <script setup>
 import NavBar from "@/components/guest/NavBar.vue";
 import Footer from "@/components/guest/Footer.vue";
+import DynamicMarquee from "@/components/guest/DynamicMarquee.vue";
 </script>
 
 <template>
@@ -12,6 +13,7 @@ import Footer from "@/components/guest/Footer.vue";
         </div>
 
         <slot />
+        <DynamicMarquee />
         <Footer />
     </div>
 </template>

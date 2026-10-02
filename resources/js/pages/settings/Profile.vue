@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { Form, Head, usePage } from '@inertiajs/vue3';
-import { Link } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
-import DeleteUser from '@/components/DeleteUser.vue';
-import Heading from '@/components/Heading.vue';
-import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { edit } from '@/routes/profile';
-import { send } from '@/routes/verification';
+import { Form, Head, usePage } from "@inertiajs/vue3";
+import { Link } from "@inertiajs/vue3";
+import { computed } from "vue";
+import ProfileController from "@/actions/App/Http/Controllers/Settings/ProfileController";
+import DeleteUser from "@/components/DeleteUser.vue";
+import Heading from "@/components/Heading.vue";
+import InputError from "@/components/InputError.vue";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { edit } from "@/routes/profile";
+import { send } from "@/routes/verification";
 
 defineOptions({
     layout: {
         breadcrumbs: [
             {
-                title: 'Profile settings',
+                title: "Profile settings",
                 href: edit(),
             },
         ],
@@ -25,6 +25,7 @@ defineOptions({
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
+console.log(user);
 </script>
 
 <template>
@@ -44,6 +45,30 @@ const user = computed(() => page.props.auth.user);
             class="space-y-6"
             v-slot="{ errors, processing }"
         >
+            <div class="w-full">
+                <Label for="avatar">Avatar</Label>
+                <div
+                    class="w-full flex flex-col md:flex-row space-x-4 justify-between"
+                >
+                    <div class="w-full">
+                        <Input
+                            id="avatar"
+                            type="file"
+                            class="mt-1 block w-full"
+                            name="avatar"
+                            accept="image/*"
+                        />
+                        <InputError class="mt-2" :message="errors.avatar" />
+                    </div>
+                    <div class="w-full">
+                        <img
+                            :src="user.avatar_url"
+                            alt="Avatar"
+                            class="mt-1 block w-16  h-16 rounded-full"
+                        />
+                    </div>
+                </div>
+            </div>
             <div class="grid gap-2">
                 <Label for="name">Name</Label>
                 <Input

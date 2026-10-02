@@ -1,5 +1,6 @@
 <script setup>
- import NavBar from "@/components/guest/NavBar.vue";
+import NavBar from "@/components/guest/NavBar.vue";
+import Footer from "@/components/guest/Footer.vue";
 </script>
 
 <template>
@@ -9,6 +10,8 @@
         <div class="relative z-10">
             <NavBar />
         </div>
+
         <slot />
+        <Footer />
     </div>
 </template>

@@ -40,9 +40,7 @@ defineOptions({
         </div>
     </div> -->
 
-    <section
-        className="bg-[#073b2a] min-h-[calc(100vh-220px)] px-6 py-16 sm:px-10 lg:px-14 lg:py-24"
-    >
+    <section className="bg-[#073b2a] min-h-screen h-full">
         <div
             className="mx-auto grid min-h-[calc(100vh-220px)] w-full max-w-7xl items-center gap-12 px-6 py-16 sm:px-10 lg:grid-cols-[1.05fr_.95fr] lg:px-14"
         >
@@ -65,13 +63,13 @@ defineOptions({
                     operator using innovative technology to expand the
                     addressable market for gaming in Malawi.
                 </p>
-                <p
+                <!-- <p
                     className="mt-4 max-w-xl text-base leading-7 text-[#f7edcf]/55"
                 >
                     We work with radio stations and media partners to bring
                     trusted gaming products to new audiences through the reach
                     and influence of broadcast media.
-                </p>
+                </p> -->
                 <div className="mt-10 flex flex-wrap gap-4">
                     <Link
                         href="/about"

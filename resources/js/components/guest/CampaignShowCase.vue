@@ -16,19 +16,24 @@ type Campaign = {
 
 const campaigns: Campaign[] = [
     {
-        src: "/campaign-umoja.png",
-        alt: "Umoja Promo Raffle campaign activation",
-        title: "Umoja Promo Raffle",
+        src: "/images/campaigns/mbc_jackpot.jpg",
+        alt: "MBC Jackpot TV Campaign",
+        title: "MBC Raffle",
     },
     {
-        src: "/campaign-pompo.png",
-        alt: "Pompo Draw radio campaign",
-        title: "Pompo Draws",
+        src: "/images/campaigns/mibawa_pompo.jpg",
+        alt: "Mibawa Draws Radio Campaign",
+        title: "Mibawa Draws",
     },
     {
-        src: "/campaign-media.png",
-        alt: "REL media operations team",
-        title: "Media operations",
+        src: "/images/campaigns/times_tv.jpg",
+        alt: "Times TV Campaign Activation",
+        title: "Media Campaigns",
+    },
+     {
+        src: "/images/campaigns/timveni_jackpot_winner.jpg",
+        alt: "Timveni Jackpot Winner Campaign",
+        title: "Timveni Jackpot",
     },
 ];
 

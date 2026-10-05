@@ -20,7 +20,7 @@ const page = usePage();
     >
         REL is building the infrastructure behind Malawi&apos;s next media
         Games.
-        
+
         <Link href="/about" className="ml-2 underline underline-offset-4"
             >Read our story</Link
         >
@@ -36,9 +36,7 @@ const page = usePage();
                 href="/contact"
                 className="group inline-flex items-center gap-2 rounded-full bg-[#e4bc19] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] text-[#073b2a]"
                 >Connect
-                <ArrowUpRightIcon
-                    className="size-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-            /></Link>
+            </Link>
         </div>
         <nav
             className="border-t border-[#f7edcf]/10"

@@ -40,23 +40,23 @@ defineOptions({
         </div>
     </div> -->
 
-    <section className="bg-[#073b2a]">
+    <section
+        className="bg-[#073b2a] min-h-[calc(100vh-220px)] px-6 py-16 sm:px-10 lg:px-14 lg:py-24"
+    >
         <div
             className="mx-auto grid min-h-[calc(100vh-220px)] w-full max-w-7xl items-center gap-12 px-6 py-16 sm:px-10 lg:grid-cols-[1.05fr_.95fr] lg:px-14"
         >
             <div>
-                <div
+                <!-- <div
                     className="mb-8 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.25em] text-[#e4bc19]"
                 >
                     <span className="h-1 w-10 bg-[#e4bc19]"> Who we are</span>
-                </div>
+                </div> -->
                 <h1
                     className="max-w-3xl text-[clamp(4rem,10vw,8.5rem)] font-black uppercase leading-[0.82] tracking-[-0.08em] text-[#f7edcf]"
                 >
-                    Umoja<span className="block text-[#e4bc19]"
-                        >Promotions.</span
-                    >
-                    <span className="block">Entertainment Media Games .</span>
+                    Umoja<span className="block text-[#e4bc19]">Promo</span>
+                    <span className="block">Media Games .</span>
                 </h1>
                 <p
                     className="mt-9 max-w-xl text-lg leading-8 text-[#f7edcf]/70"
@@ -92,6 +92,79 @@ defineOptions({
                 </div>
             </div>
             <CampaignShowcase />
+        </div>
+    </section>
+
+    <section className="bg-[#f7edcf] px-6 py-16 sm:px-10 lg:px-14 lg:py-24">
+        <div className="mx-auto w-full max-w-7xl">
+            <div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items-end">
+                <div>
+                    <p
+                        className="text-xs font-bold uppercase tracking-[0.2em] text-[#073b2a]/50"
+                    >
+                        Entertainment. Technology. Opportunity.
+                    </p>
+                    <h2
+                        className="mt-3 text-4xl font-black uppercase leading-none tracking-[-0.06em] sm:text-6xl"
+                    >
+                        Digital games, carried by media.
+                    </h2>
+                </div>
+                <p className="max-w-xl text-base leading-7 text-[#073b2a]/65">
+                    We combine digital technology with the reach and influence
+                    of radio and television to create engaging gaming
+                    experiences, new audience opportunities and potential
+                    revenue streams for media partners.
+                </p>
+            </div>
+            <div className="mt-12 grid gap-4 sm:grid-cols-3">
+                <Link
+                    href="/how-it-works"
+                    className="group rounded-2xl bg-white/60 p-6"
+                >
+                    <span className="text-4xl font-black text-[#e4bc19]"
+                        >01</span
+                    >
+                    <h3 className="mt-10 text-xl font-black uppercase">
+                        How it works
+                    </h3>
+                    <p className="mt-3 text-sm leading-6 text-[#073b2a]/60">
+                        From a station shortcode to mobile-money payment, draw
+                        and payout.
+                    </p>
+                    <ArrowUpRight className="mt-6 size-5" />
+                </Link>
+                <Link
+                    href="/raffles"
+                    className="group rounded-2xl bg-[#e4bc19] p-6"
+                >
+                    <span className="text-4xl font-black">02</span>
+                    <h3 className="mt-10 text-xl font-black uppercase">
+                        Our raffles
+                    </h3>
+                    <p className="mt-3 text-sm leading-6 text-[#073b2a]/70">
+                        Presenter, bonus and jackpot formats built for
+                        programming.
+                    </p>
+                    <ArrowUpRight className="mt-6 size-5" />
+                </Link>
+                <Link
+                    href="/technology"
+                    className="group rounded-2xl bg-[#073b2a] p-6 text-[#f7edcf]"
+                >
+                    <span className="text-4xl font-black text-[#e4bc19]"
+                        >03</span
+                    >
+                    <h3 className="mt-10 text-xl font-black uppercase">
+                        Built for trust
+                    </h3>
+                    <p className="mt-3 text-sm leading-6 text-[#f7edcf]/60">
+                        Dashboards, randomisation and reporting for accountable
+                        operations.
+                    </p>
+                    <ArrowUpRight className="mt-6 size-5 text-[#e4bc19]" />
+                </Link>
+            </div>
         </div>
     </section>
 </template>

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GuestController;
 
 
-Route::get('/', [GuestController::class, 'index'])->name('welcome');
+Route::get('/', [GuestController::class, 'index'])->name('home');
 Route::get('/about', [GuestController::class, 'about'])->name('about');
 Route::get('/how-it-works', [GuestController::class, 'howItWorks'])->name('how-it-works');
 Route::get('/people', [GuestController::class, 'people'])->name('people');

@@ -25,7 +25,7 @@ class GuestController extends Controller
     /**
      * How it works page
      */
-    public function howItWorks(Request $request)
+    public function howItWorks()
     {
         return inertia('HowItWorks');
     }
@@ -33,9 +33,9 @@ class GuestController extends Controller
     /**
      * Partnerships page
      */
-    public function partnerships()
+    public function people()
     {
-        return inertia('Partnerships');
+        return inertia('People');
     }
 
     /**
@@ -55,7 +55,7 @@ class GuestController extends Controller
     }
 
 
-    public function 
+    
 
 }
 

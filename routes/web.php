@@ -3,14 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GuestController;
 
-// guest Routes 
 
+Route::get('/', [GuestController::class, 'index'])->name('welcome');
+Route::get('/about', [GuestController::class, 'about'])->name('about');
+Route::get('/how-it-works', [GuestController::class, 'howItWorks'])->name('how-it-works');
+Route::get('/people', [GuestController::class, 'people'])->name('people');
+Route::get('/technology', [GuestController::class, 'technology'])->name('technology');
+Route::get('/raffles', [GuestController::class, 'raffles'])->name('raffles');
 
-Route::inertia('/',[GuestController::class,'index'])->name('home');
-
-Route::group( function () {
-   
-});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');

@@ -7,7 +7,7 @@ const navItems = [
     ["About", "/about"],
     ["How it works", "/how-it-works"],
     ["Our raffles", "/raffles"],
-    ["Partnerships", "/partnerships"],
+    // ["Partnerships", "/partnerships"],
     ["Technology", "/technology"],
     ["People", "/people"],
     ["Regulation", "/regulation"],

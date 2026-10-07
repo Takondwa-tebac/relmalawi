@@ -46,7 +46,7 @@ php artisan cms:make-admin writer@example.com --role=editor  # editor
 | `php artisan db:seed --class="Database\Seeders\Content\HomeSeeder"` | Re-seed one content area (all live in `database/seeders/Content`) |
 | `php artisan cms:make-admin {email} [--role=]` | Create or promote a CMS user |
 | `php artisan storage:link` | Link `public/storage` (rerun if you move the project folder) |
-| `php artisan wayfinder:generate --with-form` | Regenerate typed route/action helpers after changing routes or controllers (the `--with-form` flag matters: without it `vue-tsc` reports missing `.form` helpers; `npm run build` also regenerates them) |
+| `composer wayfinder` | Regenerate typed route/action helpers after changing routes or controllers. Use this rather than calling `wayfinder:generate` directly: it passes `--with-form`, without which `vue-tsc` reports missing `.form` helpers (`npm run build` also regenerates them) |
 | `php artisan queue:listen` | Process queued mail (contact notifications). Already part of `composer dev` |
 | `npm run build` / `npm run dev` | Build / watch front-end assets |
 | `npm run types:check` | `vue-tsc` type-check (two known errors in `UserInfo.vue` and `settings/Profile.vue` predate the CMS work) |
@@ -90,7 +90,7 @@ Unpublished items never reach the public site. Images are optimised into convers
 - notifies every `super-admin` (Filament bell notification and email),
 - emails the address configured as `contact_email` in Site settings.
 
-Protection: invisible honeypot field, strict per-IP and per-email rate limits, and Google reCAPTCHA v3 score checking. See `.env.example` for the `RECAPTCHA_*` keys (create keys at https://www.google.com/recaptcha/admin, type **v3**). Mail needs a running queue worker (`composer dev` has one; in production run `php artisan queue:work` under a supervisor).
+Protection: invisible honeypot field, Google reCAPTCHA v3 score checking, and rate limits. Strict limits (1 per 10 seconds and 3 per hour per IP, 2 per hour per email address) count only submissions that passed validation, so typos never use up an allowance (`app/Support/ContactSubmissionLimiter.php`). A looser 20 requests per minute per IP flood guard covers every POST, valid or not. See `.env.example` for the `RECAPTCHA_*` keys (create keys at https://www.google.com/recaptcha/admin, type **v3**). Mail needs a running queue worker (`composer dev` has one; in production run `php artisan queue:work` under a supervisor).
 
 ## Project map
 
@@ -138,6 +138,6 @@ Set `APP_URL` to the real public URL (media URLs are built from it), configure r
 - `phpstan analyse` reports a few errors: some are old (Fortify, `config/boost.php`, `config/media-library.php`, `User::avatarUrl`), others come from library magic (Spatie conversions, Filament `$form`) or typing nits in new code.
 - `vue-tsc` has two older errors (`UserInfo.vue`, `settings/Profile.vue`).
 - The test suite raises PHP's memory limit (`phpunit.xml`) because image conversions run in tests. Running several test processes at once on Windows can fail with a compiled-view "Access is denied" race; rerun serially.
-- Public registration (`/register`, from the starter kit) creates users with no role; they cannot enter `/admin`. Disable registration in `config/fortify.php` if you do not want it.
+- Public registration is disabled (`Features::registration()` is commented out in `config/fortify.php`). Accounts are created by admins in the CMS or with `php artisan cms:make-admin`.
 - Seeded content that is placeholder copy: the six "How it works" steps. Replace them in the CMS.
 - `PagesFeaturesSeeder` keys rows by page, group and position; re-running it after editors reorder cards can create duplicates. Seed once, then edit in the CMS.

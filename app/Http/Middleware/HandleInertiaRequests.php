@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -40,7 +41,15 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user(),
-                
+
+            ],
+            'site' => fn () => [
+                'banner_text' => Setting::get('banner_text', "REL is building the infrastructure behind Malawi's next media games."),
+                'contact_email' => Setting::get('contact_email', 'hello@relmw.com'),
+                'footer_name' => Setting::get('footer_name', 'Radio Entertainment Limited'),
+                'est_year' => Setting::get('est_year', '2024'),
+                'codes_count' => (int) Setting::get('codes_count', '40'),
+                'codes_pattern' => Setting::get('codes_pattern', '*4342*{n}#'),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

@@ -179,3 +179,37 @@
 
 
 
+
+/* Guest site animations */
+@keyframes marquee {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes campaign-roll {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-50%);
+    }
+}
+
+.campaign-roll {
+    animation: campaign-roll 24s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .campaign-roll {
+        animation: none;
+    }
+}
+
+/* reCAPTCHA v3 badge is hidden; the contact form shows the required notice instead. */
+.grecaptcha-badge {
+    visibility: hidden;
+}

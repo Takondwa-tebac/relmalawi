@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -17,9 +19,7 @@ use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-
-
-
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property int $id
@@ -34,18 +34,18 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password','avatar'])]
+#[Fillable(['name', 'email', 'password', 'avatar'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 #[Appends(['avatar_url'])]
-class User extends Authenticatable implements MustVerifyEmail, PasskeyUser ,HasMedia
+class User extends Authenticatable implements FilamentUser, HasMedia, MustVerifyEmail, PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory,
+        HasRoles,
+        InteractsWithMedia,
         Notifiable,
-        PasskeyAuthenticatable, 
-        TwoFactorAuthenticatable,
-        InteractsWithMedia;
-
+        PasskeyAuthenticatable,
+        TwoFactorAuthenticatable;
 
     /**
      * Get the attributes that should be cast.
@@ -61,15 +61,18 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser ,HasM
         ];
     }
 
-  
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->hasAnyRole(['super-admin', 'editor']);
+    }
 
     protected function avatarUrl(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->getFirstMediaUrl('avatar') ?: null,
+            get: fn () => $this->getFirstMediaUrl('avatar') ?: null,
         );
     }
-   
+
     /**
      * Get the URL of the user's avatar.
      *
@@ -81,5 +84,4 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser ,HasM
     //     return $this->getFirstMediaUrl('avatar') ?: null;
     // }
 
-   
 }

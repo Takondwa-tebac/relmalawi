@@ -73,7 +73,7 @@ return [
     |
     */
 
-    'home' => '/dashboard',
+    'home' => '/admin',
 
     /*
     |--------------------------------------------------------------------------
@@ -161,7 +161,7 @@ return [
     */
 
     'features' => [
-        Features::registration(),
+        // Features::registration(), // Disabled: accounts are created by admins (php artisan cms:make-admin)
         Features::resetPasswords(),
         Features::emailVerification(),
         Features::twoFactorAuthentication([

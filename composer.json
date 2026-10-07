@@ -15,7 +15,8 @@
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14",
-        "spatie/laravel-medialibrary": "^11.23"
+        "spatie/laravel-medialibrary": "^11.23",
+        "spatie/laravel-permission": "^8.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
@@ -54,6 +55,9 @@
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "@php artisan dev"
+        ],
+        "wayfinder": [
+            "@php artisan wayfinder:generate --with-form"
         ],
         "lint": [
             "pint --parallel"

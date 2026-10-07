@@ -2,11 +2,22 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use App\Policies\RolePolicy;
+use App\Support\MailLogo;
 use Carbon\CarbonImmutable;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use Spatie\Permission\Models\Role;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +35,54 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configureAuthorization();
+        $this->configureRateLimiting();
+
+        Event::listen(MessageSending::class, MailLogo::class);
+    }
+
+    /**
+     * Contact form limits: 1 per 10 seconds and 3 per hour per IP, 2 per hour per email.
+     */
+    protected function configureRateLimiting(): void
+    {
+        RateLimiter::for('contact', function (Request $request) {
+            $email = Str::lower(trim((string) $request->input('email')));
+
+            $limits = [
+                (new Limit('', 1, 10))->by('contact-burst:'.$request->ip()),
+                Limit::perHour(3)->by('contact-ip:'.$request->ip()),
+            ];
+
+            if ($email !== '') {
+                $limits[] = Limit::perHour(2)->by('contact-email:'.sha1($email));
+            }
+
+            return $limits;
+        });
+    }
+
+    /**
+     * Super-admins pass every gate check; everyone else falls through to policies.
+     */
+    protected function configureAuthorization(): void
+    {
+        Gate::before(function (?User $user, string $ability, array $arguments) {
+            if (! $user?->hasRole('super-admin')) {
+                return null;
+            }
+
+            // Self-deletion and built-in role deletion are decided by the policies.
+            $subject = $arguments[0] ?? null;
+            if ($ability === 'delete' && ($subject instanceof User || $subject instanceof Role)) {
+                return null;
+            }
+
+            return true;
+        });
+
+        // Spatie's Role lives outside App\Models so it is not auto-discovered.
+        Gate::policy(Role::class, RolePolicy::class);
     }
 
     /**

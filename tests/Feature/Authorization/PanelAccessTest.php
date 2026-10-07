@@ -1,0 +1,132 @@
+<?php
+
+use App\Filament\Admin\Pages\ManageSiteSettings;
+use App\Filament\Admin\Resources\Campaigns\CampaignResource;
+use App\Filament\Admin\Resources\ContactMessages\ContactMessageResource;
+use App\Filament\Admin\Resources\Features\FeatureResource;
+use App\Filament\Admin\Resources\HowItWorksSteps\HowItWorksStepResource;
+use App\Filament\Admin\Resources\Pages\PageResource;
+use App\Filament\Admin\Resources\Partners\PartnerResource;
+use App\Filament\Admin\Resources\Roles\RoleResource;
+use App\Filament\Admin\Resources\Stats\StatResource;
+use App\Filament\Admin\Resources\TeamMembers\TeamMemberResource;
+use App\Filament\Admin\Resources\Users\UserResource;
+use App\Models\Campaign;
+use App\Models\ContactMessage;
+use App\Models\Feature;
+use App\Models\HowItWorksStep;
+use App\Models\Page;
+use App\Models\Partner;
+use App\Models\Stat;
+use App\Models\TeamMember;
+use App\Models\User;
+use Database\Seeders\RolesSeeder;
+use Filament\Facades\Filament;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+
+beforeEach(function () {
+    $this->seed(RolesSeeder::class);
+    Filament::setCurrentPanel('admin');
+});
+
+/**
+ * Resource => [model, editor can list, editor can create, editor can edit].
+ *
+ * @return array<string, array{0: string, 1: string, 2: int, 3: int|null, 4: int}>
+ */
+dataset('resources', [
+    'campaigns' => [CampaignResource::class, Campaign::class, 200, 200, 200],
+    'stats' => [StatResource::class, Stat::class, 200, 200, 200],
+    'team members' => [TeamMemberResource::class, TeamMember::class, 200, 200, 200],
+    'partners' => [PartnerResource::class, Partner::class, 200, 200, 200],
+    'features' => [FeatureResource::class, Feature::class, 200, 200, 200],
+    'how it works steps' => [HowItWorksStepResource::class, HowItWorksStep::class, 200, 200, 200],
+    'pages' => [PageResource::class, Page::class, 200, 403, 200],
+    'contact messages' => [ContactMessageResource::class, ContactMessage::class, 200, null, 200],
+    'users' => [UserResource::class, User::class, 403, 403, 403],
+    'roles' => [RoleResource::class, Role::class, 403, 403, 403],
+]);
+
+function recordFor(string $model, string $resource): object
+{
+    return match ($model) {
+        Role::class => Role::findByName('editor'),
+        ContactMessage::class => ContactMessage::factory()->create(),
+        default => $model::factory()->create(),
+    };
+}
+
+function editUrl(string $resource, object $record): string
+{
+    // Contact messages are view-only pages in the panel; others have an edit page.
+    return $resource::getUrl($resource === ContactMessageResource::class ? 'view' : 'edit', ['record' => $record]);
+}
+
+it('lets an editor reach only what they are permitted', function (string $resource, string $model, int $index, ?int $create, int $edit) {
+    $this->actingAs(User::factory()->create()->assignRole('editor'));
+    $record = recordFor($model, $resource);
+
+    $this->get($resource::getUrl('index'))->assertStatus($index);
+
+    if ($create !== null) {
+        $this->get($resource::getUrl('create'))->assertStatus($create);
+    }
+
+    $this->get(editUrl($resource, $record))->assertStatus($edit);
+})->with('resources');
+
+it('lets a super-admin reach every resource', function (string $resource, string $model) {
+    $this->actingAs(User::factory()->create()->assignRole('super-admin'));
+    $record = recordFor($model, $resource);
+
+    $this->get($resource::getUrl('index'))->assertOk();
+    $this->get(editUrl($resource, $record))->assertOk();
+
+    if ($resource !== ContactMessageResource::class) {
+        $this->get($resource::getUrl('create'))->assertOk();
+    }
+})->with('resources');
+
+it('restricts site settings to those with the permission', function () {
+    $this->actingAs(User::factory()->create()->assignRole('editor'));
+    $this->get(ManageSiteSettings::getUrl())->assertForbidden();
+
+    $this->actingAs(User::factory()->create()->assignRole('super-admin'));
+    $this->get(ManageSiteSettings::getUrl())->assertOk();
+});
+
+it('grants site settings to a custom role with the permission', function () {
+    $role = Role::create(['name' => 'settings-manager', 'guard_name' => 'web']);
+    $role->givePermissionTo('manage site settings');
+    $user = User::factory()->create()->assignRole('editor', $role);
+
+    $this->actingAs($user)->get(ManageSiteSettings::getUrl())->assertOk();
+});
+
+it('redirects guests to the panel login', function (string $resource) {
+    $this->get($resource::getUrl('index'))->assertRedirect();
+    $this->get(ManageSiteSettings::getUrl())->assertRedirect();
+})->with([CampaignResource::class, UserResource::class, RoleResource::class]);
+
+it('forbids authenticated users without a staff role from the panel', function () {
+    $this->actingAs(User::factory()->create())
+        ->get('/admin')
+        ->assertForbidden();
+});
+
+it('keeps the public contact page available to guests', function () {
+    $this->get('/contact')->assertOk();
+});
+
+it('seeds idempotently', function () {
+    $permissions = Permission::count();
+
+    $this->seed(RolesSeeder::class);
+
+    expect(Permission::count())->toBe($permissions)
+        ->and(Role::count())->toBe(2)
+        ->and(Role::findByName('editor')->hasPermissionTo('manage users'))->toBeFalse()
+        ->and(Role::findByName('editor')->hasPermissionTo('update pages'))->toBeTrue()
+        ->and(Role::findByName('editor')->hasPermissionTo('create pages'))->toBeFalse();
+});

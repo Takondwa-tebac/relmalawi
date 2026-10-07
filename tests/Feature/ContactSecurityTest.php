@@ -152,6 +152,28 @@ describe('rate limiting', function () {
             ->assertSessionHasNoErrors();
     });
 
+    it('does not count invalid submissions against the limits', function () {
+        foreach (range(1, 4) as $ignored) {
+            $this->post('/contact', contactPayload(['message' => 'no']))
+                ->assertSessionHasErrors('message')
+                ->assertSessionDoesntHaveErrors('throttle');
+        }
+
+        $this->post('/contact', contactPayload())->assertSessionHasNoErrors();
+
+        expect(ContactMessage::count())->toBe(1);
+    });
+
+    it('still floods-guards the route with a loose per-minute limit', function () {
+        foreach (range(1, 20) as $ignored) {
+            $this->post('/contact', contactPayload(['message' => 'no']));
+        }
+
+        $this->post('/contact', contactPayload(['message' => 'no']))
+            ->assertRedirect()
+            ->assertSessionHasErrors('throttle');
+    });
+
     it('allows only three submissions per hour per IP', function () {
         foreach (range(1, 3) as $i) {
             $this->post('/contact', contactPayload(['email' => "person{$i}@example.com"]))

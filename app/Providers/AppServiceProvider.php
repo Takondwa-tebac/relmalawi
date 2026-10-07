@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Spatie\Permission\Models\Role;
 
@@ -46,20 +45,9 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function configureRateLimiting(): void
     {
-        RateLimiter::for('contact', function (Request $request) {
-            $email = Str::lower(trim((string) $request->input('email')));
-
-            $limits = [
-                (new Limit('', 1, 10))->by('contact-burst:'.$request->ip()),
-                Limit::perHour(3)->by('contact-ip:'.$request->ip()),
-            ];
-
-            if ($email !== '') {
-                $limits[] = Limit::perHour(2)->by('contact-email:'.sha1($email));
-            }
-
-            return $limits;
-        });
+        // Loose flood guard for every POST (including invalid ones). The strict per-IP and
+        // per-email limits live in ContactSubmissionLimiter and only count valid submissions.
+        RateLimiter::for('contact', fn (Request $request) => Limit::perMinute(20)->by('contact-flood:'.$request->ip()));
     }
 
     /**

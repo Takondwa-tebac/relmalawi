@@ -26,7 +26,7 @@ composer dev                      # server + queue worker + vite (see `php artis
 - Public site: http://localhost:8000
 - Admin panel: http://localhost:8000/admin (log in through the normal `/login`)
 
-Local seed creates a convenience account `test@example.com` (factory default password) with the `super-admin` role. **Remove or change it before deploying.**
+The local seed (`ProvisionalUsersSeeder`) creates two verified logins: `admin@rel.test` (`super-admin`) and `editor@rel.test` (`editor`). Both use the password in `SEED_USER_PASSWORD` in your `.env` (copy the line from `.env.example` and fill it in; there is no default and the seeder refuses to run without it). The seeder never runs in production; create real admins there with `cms:make-admin`. Re-run it any time with `php artisan db:seed --class=ProvisionalUsersSeeder` (this also resets those two passwords to the current `.env` value).
 
 ### Create your own admin
 

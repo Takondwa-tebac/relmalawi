@@ -56,4 +56,7 @@ return [
         'editor' => 'editor',
     ],
 
+    // Password for the local-only accounts made by ProvisionalUsersSeeder (set in .env).
+    'seed_user_password' => env('SEED_USER_PASSWORD'),
+
 ];

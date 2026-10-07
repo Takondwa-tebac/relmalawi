@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,10 +13,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RolesSeeder::class);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ])->assignRole('super-admin');
+        // Local-only logins (skipped in production): admin@rel.test and editor@rel.test.
+        $this->call(ProvisionalUsersSeeder::class);
 
         foreach ($this->contentSeeders() as $seeder) {
             $this->call($seeder);

@@ -1,7 +1,7 @@
-<script setup>
-import NavBar from "@/components/guest/NavBar.vue";
-import Footer from "@/components/guest/Footer.vue";
-import DynamicMarquee from "@/components/guest/DynamicMarquee.vue";
+<script setup lang="ts">
+import DynamicMarquee from '@/components/guest/DynamicMarquee.vue';
+import Footer from '@/components/guest/Footer.vue';
+import NavBar from '@/components/guest/NavBar.vue';
 </script>
 
 <template>
@@ -11,7 +11,6 @@ import DynamicMarquee from "@/components/guest/DynamicMarquee.vue";
         <div class="relative z-10">
             <NavBar />
         </div>
-
         <slot />
         <DynamicMarquee />
         <Footer />

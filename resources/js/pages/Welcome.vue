@@ -1,166 +1,158 @@
 <script setup lang="ts">
-import GuestLayout from "@/layouts/GuestLayout.vue";
-import StatCard from "@/components/guest/StatsCard.vue";
-import CampaignShowcase from "@/components/guest/CampaignShowCase.vue";
-import { Head, Link } from "@inertiajs/vue3";
+import { ArrowUpRightIcon } from '@heroicons/vue/24/outline';
+import { Head, Link } from '@inertiajs/vue3';
+import CampaignShowcase from '@/components/guest/CampaignShowCase.vue';
+import StatCard from '@/components/guest/StatsCard.vue';
+import GuestLayout from '@/layouts/GuestLayout.vue';
+import type { PageIntroData } from '@/types';
+import type { CampaignData, HomeHero, StatData } from '@/types/home';
 
-defineOptions({
-    layout: GuestLayout,
-    title: "Welcome",
-});
+defineOptions({ layout: GuestLayout });
+
+defineProps<{
+    page: PageIntroData;
+    hero: HomeHero;
+    campaigns: CampaignData[];
+    stats: StatData[];
+}>();
 </script>
 
 <template>
-    <Head title="REL">
-        <link rel="preconnect" href="https://rsms.me/" />
-        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <Head :title="page.meta_title ?? page.title">
+        <meta
+            v-if="page.meta_description"
+            head-key="description"
+            name="description"
+            :content="page.meta_description"
+        />
     </Head>
 
-    <!-- <div class="w-full h-screen flex justify-items-center">
-
-        <div class="m-auto text-center">
-            <h1 class="text-5xl font-bold text-[#073b2a]">Welcome to REL</h1>
-            <p class="mt-4 text-lg text-[#073b2a]">
-                Malawi's next media games.
-            </p>
-            <div class="mt-6 flex justify-center gap-4">
-                <Link
-                    href="{login()}"
-                    class="rounded-full bg-[#e4bc19] px-6 py-3 text-sm font-semibold uppercase tracking-wider text-[#073b2a] transition-colors hover:bg-[#073b2a] hover:text-[#e4bc19]"
-                >
-                    Login
-                </Link>
-                <Link
-                    href="{dashboard()}"
-                    class="rounded-full border border-[#e4bc19] px-6 py-3 text-sm font-semibold uppercase tracking-wider text-[#e4bc19] transition-colors hover:bg-[#e4bc19] hover:text-[#073b2a]"
-                >
-                    Dashboard
-                </Link>
-            </div>
-        </div>
-    </div> -->
-
-    <section className="bg-[#073b2a] min-h-screen h-full">
+    <section class="bg-[#073b2a]">
         <div
-            className="mx-auto grid min-h-[calc(100vh-220px)] w-full max-w-7xl items-center gap-12 px-6 py-16 sm:px-10 lg:grid-cols-[1.05fr_.95fr] lg:px-14"
+            class="mx-auto grid min-h-[calc(100vh-220px)] w-full max-w-7xl items-center gap-12 px-6 py-16 sm:px-10 lg:grid-cols-[1.05fr_.95fr] lg:px-14"
         >
             <div>
-                <!-- <div
-                    className="mb-8 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.25em] text-[#e4bc19]"
+                <div
+                    v-if="page.eyebrow"
+                    class="mb-8 flex items-center gap-3 text-xs font-bold tracking-[0.25em] text-[#e4bc19] uppercase"
                 >
-                    <span className="h-1 w-10 bg-[#e4bc19]"> Who we are</span>
-                </div> -->
+                    <span class="h-1 w-10 bg-[#e4bc19]" />
+                    {{ page.eyebrow }}
+                </div>
                 <h1
-                    className="max-w-3xl text-[clamp(4rem,10vw,8.5rem)] font-black uppercase leading-[0.82] tracking-[-0.08em] text-[#f7edcf]"
+                    class="max-w-3xl text-[clamp(4rem,10vw,8.5rem)] leading-[0.82] font-black tracking-[-0.08em] text-[#f7edcf] uppercase"
                 >
-                    Umoja<span className="block text-[#e4bc19]">Promo</span>
-                    <span className="block">Media Games .</span>
+                    {{ page.title }}
+                    <span v-if="page.title_accent" class="block text-[#e4bc19]">
+                        {{ page.title_accent }}
+                    </span>
+                    <span v-if="hero.title_tail" class="block">
+                        {{ hero.title_tail }}
+                    </span>
                 </h1>
                 <p
-                    className="mt-9 max-w-xl text-lg leading-8 text-[#f7edcf]/70"
+                    v-if="page.description"
+                    class="mt-9 max-w-xl text-lg leading-8 text-[#f7edcf]/70"
                 >
-                    Radio Entertainment Limited is a licensed digital gaming
-                    operator using innovative technology to expand the
-                    addressable market for gaming in Malawi.
+                    {{ page.description }}
                 </p>
-                <!-- <p
-                    className="mt-4 max-w-xl text-base leading-7 text-[#f7edcf]/55"
+                <p
+                    v-if="hero.secondary"
+                    class="mt-4 max-w-xl text-base leading-7 text-[#f7edcf]/55"
                 >
-                    We work with radio stations and media partners to bring
-                    trusted gaming products to new audiences through the reach
-                    and influence of broadcast media.
-                </p> -->
-                <div className="mt-10 flex flex-wrap gap-4">
+                    {{ hero.secondary }}
+                </p>
+                <div class="mt-10 flex flex-wrap gap-4">
                     <Link
                         href="/about"
-                        className="group inline-flex items-center gap-3 rounded-full bg-[#e4bc19] px-5 py-3 text-sm font-bold uppercase tracking-[0.12em] text-[#073b2a]"
+                        class="group inline-flex items-center gap-3 rounded-full bg-[#e4bc19] px-5 py-3 text-sm font-bold tracking-[0.12em] text-[#073b2a] uppercase"
                     >
-                        Discover REL <ArrowUpRight className="size-4" />
+                        Discover REL <ArrowUpRightIcon class="size-4" />
                     </Link>
                     <Link
                         href="/contact"
-                        className="inline-flex items-center rounded-full border border-[#f7edcf]/25 px-5 py-3 text-sm uppercase tracking-[0.12em] text-[#f7edcf]/75"
+                        class="inline-flex items-center rounded-full border border-[#f7edcf]/25 px-5 py-3 text-sm tracking-[0.12em] text-[#f7edcf]/75 uppercase"
                     >
                         Work with us
                     </Link>
                 </div>
-                <div className="mt-16 flex gap-10">
-                    <StatCard value="40" label="Dynamic codes" />
-                    <StatCard value="01" label="New platform" />
+                <div v-if="stats.length" class="mt-16 flex gap-10">
+                    <StatCard
+                        v-for="stat in stats"
+                        :key="stat.id"
+                        :value="stat.value"
+                        :label="stat.label"
+                    />
                 </div>
             </div>
-            <CampaignShowcase />
+            <CampaignShowcase :campaigns="campaigns" />
         </div>
     </section>
 
-    <section className="bg-[#f7edcf] px-6 py-16 sm:px-10 lg:px-14 lg:py-24">
-        <div className="mx-auto w-full max-w-7xl">
-            <div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items-end">
+    <section class="bg-[#f7edcf] px-6 py-16 sm:px-10 lg:px-14 lg:py-24">
+        <div class="mx-auto w-full max-w-7xl">
+            <div class="grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items-end">
                 <div>
                     <p
-                        className="text-xs font-bold uppercase tracking-[0.2em] text-[#073b2a]/50"
+                        class="text-xs font-bold tracking-[0.2em] text-[#073b2a]/50 uppercase"
                     >
                         Entertainment. Technology. Opportunity.
                     </p>
                     <h2
-                        className="mt-3 text-4xl font-black uppercase leading-none tracking-[-0.06em] sm:text-6xl"
+                        class="mt-3 text-4xl leading-none font-black tracking-[-0.06em] uppercase sm:text-6xl"
                     >
                         Digital games, carried by media.
                     </h2>
                 </div>
-                <p className="max-w-xl text-base leading-7 text-[#073b2a]/65">
+                <p class="max-w-xl text-base leading-7 text-[#073b2a]/65">
                     We combine digital technology with the reach and influence
                     of radio and television to create engaging gaming
                     experiences, new audience opportunities and potential
                     revenue streams for media partners.
                 </p>
             </div>
-            <div className="mt-12 grid gap-4 sm:grid-cols-3">
+            <div class="mt-12 grid gap-4 sm:grid-cols-3">
                 <Link
                     href="/how-it-works"
-                    className="group rounded-2xl bg-white/60 p-6"
+                    class="group rounded-2xl bg-white/60 p-6"
                 >
-                    <span className="text-4xl font-black text-[#e4bc19]"
-                        >01</span
-                    >
-                    <h3 className="mt-10 text-xl font-black uppercase">
+                    <span class="text-4xl font-black text-[#e4bc19]">01</span>
+                    <h3 class="mt-10 text-xl font-black uppercase">
                         How it works
                     </h3>
-                    <p className="mt-3 text-sm leading-6 text-[#073b2a]/60">
+                    <p class="mt-3 text-sm leading-6 text-[#073b2a]/60">
                         From a station shortcode to mobile-money payment, draw
                         and payout.
                     </p>
-                    <ArrowUpRight className="mt-6 size-5" />
+                    <ArrowUpRightIcon class="mt-6 size-5" />
                 </Link>
                 <Link
                     href="/raffles"
-                    className="group rounded-2xl bg-[#e4bc19] p-6"
+                    class="group rounded-2xl bg-[#e4bc19] p-6"
                 >
-                    <span className="text-4xl font-black">02</span>
-                    <h3 className="mt-10 text-xl font-black uppercase">
+                    <span class="text-4xl font-black">02</span>
+                    <h3 class="mt-10 text-xl font-black uppercase">
                         Our raffles
                     </h3>
-                    <p className="mt-3 text-sm leading-6 text-[#073b2a]/70">
+                    <p class="mt-3 text-sm leading-6 text-[#073b2a]/70">
                         Presenter, bonus and jackpot formats built for
                         programming.
                     </p>
-                    <ArrowUpRight className="mt-6 size-5" />
+                    <ArrowUpRightIcon class="mt-6 size-5" />
                 </Link>
                 <Link
                     href="/technology"
-                    className="group rounded-2xl bg-[#073b2a] p-6 text-[#f7edcf]"
+                    class="group rounded-2xl bg-[#073b2a] p-6 text-[#f7edcf]"
                 >
-                    <span className="text-4xl font-black text-[#e4bc19]"
-                        >03</span
-                    >
-                    <h3 className="mt-10 text-xl font-black uppercase">
+                    <span class="text-4xl font-black text-[#e4bc19]">03</span>
+                    <h3 class="mt-10 text-xl font-black uppercase">
                         Built for trust
                     </h3>
-                    <p className="mt-3 text-sm leading-6 text-[#f7edcf]/60">
+                    <p class="mt-3 text-sm leading-6 text-[#f7edcf]/60">
                         Dashboards, randomisation and reporting for accountable
                         operations.
                     </p>
-                    <ArrowUpRight className="mt-6 size-5 text-[#e4bc19]" />
+                    <ArrowUpRightIcon class="mt-6 size-5 text-[#e4bc19]" />
                 </Link>
             </div>
         </div>

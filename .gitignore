@@ -45,3 +45,6 @@ yarn-error.log
 /boost.json
 /opencode.json
 /opencode.jsonc
+
+# Spatie media library temp files
+/storage/media-library

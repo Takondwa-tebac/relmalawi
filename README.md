@@ -52,7 +52,9 @@ php artisan cms:make-admin writer@example.com --role=editor  # editor
 | `npm run types:check` | `vue-tsc` type-check (two known errors in `UserInfo.vue` and `settings/Profile.vue` predate the CMS work) |
 | `composer lint` / `composer lint:check` | Pint format / check |
 | `composer types:check` | PHPStan (has a handful of known baseline errors, see Known issues) |
-| `php artisan test --compact` | Full Pest suite (`composer test` also runs lint + PHPStan) |
+| `composer test:fast` | Full Pest suite across 6 parallel workers (about 3 minutes). Use this day to day |
+| `php artisan test --compact` | Full Pest suite in one process (much slower; handy with `--filter=Name` for a single file) |
+| `composer test` | Lint + PHPStan + the suite |
 
 ## What is editable in the CMS
 
@@ -61,6 +63,7 @@ Every public page is rendered from the database. Nothing below needs a code chan
 | Public page | Admin area (nav group) | Models |
 |---|---|---|
 | All pages: eyebrow, headline, accent, description, SEO | **Content → Pages** | `Page` |
+| Switching a page on or off, and showing it in the navbar | **Content → Pages**: the "Active" and "In navbar" toggles in the list (or the Visibility section when editing), plus bulk "Switch on / Switch off" | `Page` |
 | Home: campaign image roll | **Campaigns** (upload image, reorder, publish toggle) | `Campaign` (+ media) |
 | Home: hero stat cards | **Stats** | `Stat` |
 | Home: headline last line, second paragraph | **Site → Site settings** | `Setting` |
@@ -68,9 +71,18 @@ Every public page is rendered from the database. Nothing below needs a code chan
 | People: team grid | **Team members** (photo, reorder, publish) | `TeamMember` (+ media) |
 | Partnerships: station/media logos | **Partners** (logo, type, reorder) | `Partner` (+ media) |
 | How it works: numbered steps | **How it works steps** | `HowItWorksStep` |
+| FAQ page and home-page teaser | **FAQs** (category, answer, "show on home", reorder) | `Faq` |
+| Payments partners (Airtel Money, TNM Mpamba) | **Partners** with type "Mobile money" | `Partner` |
 | Contact: inbox of submissions | **Contact messages** (read/unread, reply by email) | `ContactMessage` |
+| Admin dashboard (stats, chart, latest messages, missing-image checks) | Built in, permission-aware widgets in `app/Filament/Admin/Widgets` | n/a |
 | Banner, footer, contact email, marquee codes | **Site → Site settings** | `Setting` |
 | Users and roles | **Users**, **Roles** | `User`, spatie `Role` |
+
+Section copy on most pages (cards, stat boxes, step lists, call-to-action bands) is stored as **Features** rows grouped by page and section (`app/Enums/FeatureGroup.php`); a body field is paragraphs, and lines starting with `- ` become tick bullets. Seed images used by the seeders (leader portraits, mobile-money logos) live in `database/seeders/Content/assets`.
+
+**Switching pages on and off.** A page that is switched off answers 404 to visitors (with a branded "page not found") and disappears from the navbar and footer; signed-in staff can still open it to preview, under a red warning strip. "In navbar" is separate: an active page can stay live but be left out of the navbar. The navbar label and order are editable too. The home page cannot be switched off, and Contact is the "Connect" button rather than a tab. Switching Contact off also blocks form submissions. Links written by hand inside page copy are not rewritten, so remove or edit them yourself if you switch a page off. The mechanism is the `page.active:{slug}` route middleware (`app/Http/Middleware/EnsurePageIsActive.php`) and `Page::visibility()` (cached, cleared whenever a page is saved).
+
+On phones the navbar is a fly-in sidebar (hamburger button); the tab row only shows from tablet width up.
 
 Unpublished items never reach the public site. Images are optimised into conversions (`thumb`, `card`) automatically.
 
@@ -137,7 +149,8 @@ Set `APP_URL` to the real public URL (media URLs are built from it), configure r
 
 - `phpstan analyse` reports a few errors: some are old (Fortify, `config/boost.php`, `config/media-library.php`, `User::avatarUrl`), others come from library magic (Spatie conversions, Filament `$form`) or typing nits in new code.
 - `vue-tsc` has two older errors (`UserInfo.vue`, `settings/Profile.vue`).
-- The test suite raises PHP's memory limit (`phpunit.xml`) because image conversions run in tests. Running several test processes at once on Windows can fail with a compiled-view "Access is denied" race; rerun serially.
+- The test suite raises PHP's memory limit (`phpunit.xml`) because image conversions run in tests. `tests/Pest.php` gives each parallel worker its own compiled-view folder (`storage/framework/views/testing-N`, ignored by git), so parallel runs do not hit Windows' "Access is denied" view-cache race, and it fakes the `public` disk so tests never write into your real `storage/app/public`.
+- Slow-test tip: the admin (Filament) tests dominate the run time because every case renders a full admin page. Prefer asserting permissions through `Resource::canViewAny()/canCreate()/canEdit()` (see `tests/Feature/Authorization/PanelAccessTest.php`) and keep real page loads for a few smoke tests.
 - Public registration is disabled (`Features::registration()` is commented out in `config/fortify.php`). Accounts are created by admins in the CMS or with `php artisan cms:make-admin`.
 - Seeded content that is placeholder copy: the six "How it works" steps. Replace them in the CMS.
 - `PagesFeaturesSeeder` keys rows by page, group and position; re-running it after editors reorder cards can create duplicates. Seed once, then edit in the CMS.

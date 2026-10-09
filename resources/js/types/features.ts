@@ -11,7 +11,16 @@ export type FeatureIconKey =
     | 'gift'
     | 'file-check'
     | 'scale'
-    | 'check-circle';
+    | 'check-circle'
+    | 'smartphone'
+    | 'wallet'
+    | 'mic'
+    | 'users'
+    | 'building'
+    | 'handshake'
+    | 'headset'
+    | 'ticket'
+    | 'cog';
 
 /** One CMS-managed card/block (features table). */
 export type FeatureItem = {

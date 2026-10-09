@@ -15,6 +15,7 @@ class TeamMemberFactory extends Factory
         return [
             'name' => fake()->name(),
             'role' => fake()->jobTitle(),
+            'summary' => fake()->sentence(8),
             'bio' => fake()->sentence(12),
             'sort_order' => fake()->numberBetween(0, 100),
             'is_published' => true,

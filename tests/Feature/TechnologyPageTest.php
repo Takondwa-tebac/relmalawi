@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Feature;
+use Database\Seeders\Content\AboutTechRegulationSeeder;
 use Database\Seeders\Content\PagesFeaturesSeeder;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -28,4 +29,21 @@ it('serves the seeded technology copy', function () {
         ->has('features.accountability', 1));
 
     expect(Feature::where('page_slug', 'technology')->count())->toBe(5);
+});
+
+it('serves the rich technology sections and stays idempotent', function () {
+    foreach ([1, 2] as $_) {
+        $this->seed(PagesFeaturesSeeder::class);
+        $this->seed(AboutTechRegulationSeeder::class);
+    }
+
+    $this->get('/technology')->assertInertia(fn (Assert $page) => $page
+        ->has('features.rows', 2)
+        ->has('features.dashboards', 3)
+        ->has('features.reports', 7)
+        ->has('features.ussd', 1)
+        ->has('features.runs', 4)
+        ->has('features.cta', 1));
+
+    expect(Feature::where('page_slug', 'technology')->count())->toBe(26);
 });

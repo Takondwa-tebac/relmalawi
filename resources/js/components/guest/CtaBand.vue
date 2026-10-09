@@ -23,13 +23,22 @@ defineProps<{ block: FeatureItem }>();
                     {{ block.title }}
                 </h2>
             </div>
-            <a
-                v-if="block.meta.button_label && block.meta.button_url"
-                :href="block.meta.button_url"
-                class="inline-flex items-center gap-2 rounded-full bg-[#073b2a] px-5 py-3 text-xs font-bold uppercase tracking-[0.14em] text-[#f7edcf]"
-            >
-                {{ block.meta.button_label }}
-            </a>
+            <div class="flex flex-wrap gap-3">
+                <a
+                    v-if="block.meta.button_label && block.meta.button_url"
+                    :href="block.meta.button_url"
+                    class="inline-flex items-center gap-2 rounded-full bg-[#073b2a] px-5 py-3 text-xs font-bold uppercase tracking-[0.14em] text-[#f7edcf]"
+                >
+                    {{ block.meta.button_label }}
+                </a>
+                <a
+                    v-if="block.meta.secondary_label && block.meta.secondary_url"
+                    :href="String(block.meta.secondary_url)"
+                    class="inline-flex items-center gap-2 rounded-full border border-[#073b2a] px-5 py-3 text-xs font-bold uppercase tracking-[0.14em] text-[#073b2a]"
+                >
+                    {{ block.meta.secondary_label }}
+                </a>
+            </div>
         </div>
     </section>
 </template>

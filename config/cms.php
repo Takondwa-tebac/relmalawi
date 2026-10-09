@@ -2,6 +2,7 @@
 
 use App\Models\Campaign;
 use App\Models\ContactMessage;
+use App\Models\Faq;
 use App\Models\Feature;
 use App\Models\HowItWorksStep;
 use App\Models\Page;
@@ -37,6 +38,7 @@ return [
         'team members' => ['label' => 'Team members', 'model' => TeamMember::class, 'abilities' => $sortable, 'editor' => $sortable],
         'partners' => ['label' => 'Partners', 'model' => Partner::class, 'abilities' => $sortable, 'editor' => $sortable],
         'features' => ['label' => 'Features', 'model' => Feature::class, 'abilities' => $sortable, 'editor' => $sortable],
+        'faqs' => ['label' => 'FAQs', 'model' => Faq::class, 'abilities' => $sortable, 'editor' => $sortable],
         'how-it-works steps' => ['label' => 'How it works steps', 'model' => HowItWorksStep::class, 'abilities' => $sortable, 'editor' => $sortable],
         // Pages are a fixed set of slugs: editors may only view and edit them.
         'pages' => ['label' => 'Pages', 'model' => Page::class, 'abilities' => $crud, 'editor' => ['view', 'update']],

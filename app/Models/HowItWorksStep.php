@@ -14,11 +14,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $title
  * @property string|null $body
+ * @property string|null $detail
  * @property string|null $icon
  * @property int $sort_order
  * @property bool $is_published
  */
-#[Fillable(['title', 'body', 'icon', 'sort_order', 'is_published'])]
+#[Fillable(['title', 'body', 'detail', 'icon', 'sort_order', 'is_published'])]
 class HowItWorksStep extends Model
 {
     /** @use HasFactory<HowItWorksStepFactory> */

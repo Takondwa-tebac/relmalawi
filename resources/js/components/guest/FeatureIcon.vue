@@ -2,6 +2,15 @@
 import {
     BarChart3,
     CheckCircle2,
+    Smartphone,
+    Wallet,
+    Mic,
+    Users,
+    Building2,
+    Handshake,
+    Headset,
+    Ticket,
+    Cog,
     Crown,
     Eye,
     FileCheck2,
@@ -33,6 +42,15 @@ const registry: Record<FeatureIconKey, Component> = {
     'file-check': FileCheck2,
     scale: Scale,
     'check-circle': CheckCircle2,
+    smartphone: Smartphone,
+    wallet: Wallet,
+    mic: Mic,
+    users: Users,
+    building: Building2,
+    handshake: Handshake,
+    headset: Headset,
+    ticket: Ticket,
+    cog: Cog,
 };
 
 const icon = computed(() =>

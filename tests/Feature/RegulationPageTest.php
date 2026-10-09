@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Feature;
+use Database\Seeders\Content\AboutTechRegulationSeeder;
 use Database\Seeders\Content\PagesFeaturesSeeder;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -28,4 +29,21 @@ it('serves the seeded regulation copy', function () {
         ->has('features.standard', 1));
 
     expect(Feature::where('page_slug', 'regulation')->count())->toBe(5);
+});
+
+it('serves the rich regulation sections and stays idempotent', function () {
+    foreach ([1, 2] as $_) {
+        $this->seed(PagesFeaturesSeeder::class);
+        $this->seed(AboutTechRegulationSeeder::class);
+    }
+
+    $this->get('/regulation')->assertInertia(fn (Assert $page) => $page
+        ->has('features.rows', 3)
+        ->has('features.promises', 6)
+        ->has('features.cta', 1));
+
+    expect(Feature::where('page_slug', 'regulation')->count())->toBe(16);
+
+    $body = Feature::where('page_slug', 'regulation')->pluck('body', 'title')->implode(' ');
+    expect($body)->not->toContain('MWK 10');
 });

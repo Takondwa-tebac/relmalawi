@@ -18,3 +18,11 @@ export type HomeHero = {
     title_tail: string;
     secondary: string | null;
 };
+
+export type HomePartnerData = {
+    id: number;
+    name: string;
+    type: string;
+    website_url: string | null;
+    logo_url: string | null;
+};

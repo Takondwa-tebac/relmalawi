@@ -18,11 +18,12 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property int $id
  * @property string $name
  * @property string $role
+ * @property string|null $summary
  * @property string|null $bio
  * @property int $sort_order
  * @property bool $is_published
  */
-#[Fillable(['name', 'role', 'bio', 'sort_order', 'is_published'])]
+#[Fillable(['name', 'role', 'summary', 'bio', 'sort_order', 'is_published'])]
 class TeamMember extends Model implements HasMedia
 {
     /** @use HasFactory<TeamMemberFactory> */

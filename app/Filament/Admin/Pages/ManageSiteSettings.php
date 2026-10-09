@@ -38,7 +38,7 @@ class ManageSiteSettings extends Page
      */
     public const DEFAULTS = [
         'banner_text' => "REL is building the infrastructure behind Malawi's next media games.",
-        'contact_email' => 'hello@relmw.com',
+        'contact_email' => 'hello@relmalawi.com',
         'footer_name' => 'Radio Entertainment Limited',
         'est_year' => '2024',
         'codes_count' => '40',

@@ -213,3 +213,54 @@
 .grecaptcha-badge {
     visibility: hidden;
 }
+
+/*
+  Auth pages (login, password reset, two-factor...) use the public site's
+  green / gold / cream palette. Overriding the shadcn tokens here themes every
+  form control inside the wrapper without touching each page, in light or dark mode.
+*/
+.rel-auth {
+    --background: #f7edcf;
+    --foreground: #073b2a;
+    --card: rgb(255 255 255 / 0.6);
+    --card-foreground: #073b2a;
+    --popover: #f7edcf;
+    --popover-foreground: #073b2a;
+    --primary: #073b2a;
+    --primary-foreground: #f7edcf;
+    --secondary: rgb(7 59 42 / 0.08);
+    --secondary-foreground: #073b2a;
+    --muted: rgb(7 59 42 / 0.06);
+    --muted-foreground: rgb(7 59 42 / 0.6);
+    --accent: rgb(228 188 25 / 0.25);
+    --accent-foreground: #073b2a;
+    --border: rgb(7 59 42 / 0.18);
+    --input: rgb(7 59 42 / 0.25);
+    --ring: #e4bc19;
+    color-scheme: light;
+}
+
+.rel-auth [data-slot='button'] {
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.rel-auth [data-slot='button']:not(:disabled):hover {
+    background-color: #0d6347;
+    color: #f7edcf;
+}
+
+.rel-auth [data-slot='input'] {
+    background-color: rgb(255 255 255 / 0.7);
+    border-radius: 0.75rem;
+}
+
+.rel-auth [data-slot='label'] {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}

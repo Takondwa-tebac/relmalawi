@@ -32,8 +32,15 @@ class TeamMemberForm
                         TextInput::make('role')
                             ->required()
                             ->maxLength(255),
+                        Textarea::make('summary')
+                            ->label('Headline summary')
+                            ->helperText('One sentence shown under the name.')
+                            ->rows(2)
+                            ->columnSpanFull(),
                         Textarea::make('bio')
-                            ->rows(4)
+                            ->label('Credentials')
+                            ->helperText('One credential per line. Each line becomes a bullet on the People page.')
+                            ->rows(8)
                             ->columnSpanFull(),
                         TextInput::make('sort_order')
                             ->numeric()

@@ -1,8 +1,12 @@
 <?php
 
+use App\Enums\PartnerType;
 use App\Models\Campaign;
+use App\Models\Faq;
 use App\Models\Page;
+use App\Models\Partner;
 use App\Models\Stat;
+use Database\Seeders\Content\FaqSeeder;
 use Database\Seeders\Content\HomeSeeder;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -49,4 +53,33 @@ it('seeds the home page idempotently with the existing campaign images', functio
     $this->get('/')->assertInertia(fn (Assert $page) => $page
         ->has('campaigns', 4)
         ->where('campaigns.0.title', 'MBC Raffle'));
+});
+
+it('passes home sections, faqs and partner logos split by type', function () {
+    $this->seed(HomeSeeder::class);
+    $this->seed(FaqSeeder::class);
+
+    $media = Partner::factory()->create(['type' => PartnerType::Radio, 'name' => 'Radio One']);
+    $media->addMedia(public_path('images/magla-logo.png'))->preservingOriginal()->toMediaCollection('logo');
+    $money = Partner::factory()->create(['type' => PartnerType::MobileMoney, 'name' => 'Airtel Money']);
+    $money->addMedia(public_path('images/magla-logo.png'))->preservingOriginal()->toMediaCollection('logo');
+    Partner::factory()->create(['type' => PartnerType::Television, 'name' => 'No Logo TV']);
+
+    $this->get('/')->assertInertia(fn (Assert $page) => $page
+        ->has('features.steps', 4)
+        ->has('features.audiences', 3)
+        ->has('features.stats', 4)
+        ->has('features.cta.0.meta.button_url')
+        ->has('mediaPartners', 1)
+        ->where('mediaPartners.0.name', 'Radio One')
+        ->has('paymentPartners', 1)
+        ->where('paymentPartners.0.name', 'Airtel Money')
+        ->has('faqs', Faq::forHome()->count()));
+});
+
+it('passes empty partner lists when no logos exist', function () {
+    $this->get('/')->assertInertia(fn (Assert $page) => $page
+        ->has('mediaPartners', 0)
+        ->has('paymentPartners', 0)
+        ->has('faqs', 0));
 });

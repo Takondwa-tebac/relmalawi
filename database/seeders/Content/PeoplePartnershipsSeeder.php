@@ -3,55 +3,98 @@
 namespace Database\Seeders\Content;
 
 use App\Enums\PartnerType;
-use App\Models\Page;
 use App\Models\Partner;
 use App\Models\TeamMember;
 use Illuminate\Database\Seeder;
 use Spatie\MediaLibrary\HasMedia;
 
+/**
+ * Team members and partners. Page and Feature copy for /people and /partnerships
+ * lives in LeadershipPartnershipsSeeder.
+ */
 class PeoplePartnershipsSeeder extends Seeder
 {
-    /** Team photos ported from the original Next.js app, kept in the repo so seeding is self-contained. */
-    private const PHOTOS = __DIR__.'/assets/team';
+    /** Leader photos, kept in the repo so seeding is self-contained. */
+    private const PHOTOS = __DIR__.'/assets/leaders';
+
+    /** Logos for partners that are not in public/images/partners. */
+    private const PARTNER_LOGOS = __DIR__.'/assets/partners';
+
+    /** Fake placeholder people from the original UI mock; removed if they still exist. */
+    private const PLACEHOLDERS = ['Martha Chirwa', 'Lloyd Banda', 'Thoko Mbewe', 'Patrick Manda'];
 
     public function run(): void
     {
-        $this->seedPages();
         $this->seedTeam();
         $this->seedPartners();
     }
 
-    private function seedPages(): void
-    {
-        Page::query()->updateOrCreate(['slug' => 'people'], [
-            'eyebrow' => 'The people behind the work',
-            'title' => 'A team with',
-            'title_accent' => 'skin in the game.',
-            'description' => 'REL is powered by people who understand media, technology, audiences and the responsibility that comes with operating games in public spaces. We bring different strengths to one shared standard: make it clear, make it fair, make it memorable.',
-        ]);
-
-        Page::query()->updateOrCreate(['slug' => 'partnerships'], [
-            'eyebrow' => 'Our network',
-            'title' => 'Media works',
-            'title_accent' => 'better together.',
-            'description' => "REL does not own radio stations or television channels. We partner with Malawi's media houses, stations and talent to operate engaging, responsible media games where audiences already are.",
-        ]);
-    }
-
     private function seedTeam(): void
     {
+        TeamMember::query()->whereIn('name', self::PLACEHOLDERS)->get()->each->delete();
+
         $team = [
-            ['Martha Chirwa', 'Operations & Station Partnerships', 'Keeps partner relationships moving from first conversation to live execution.', 'team-operations.png'],
-            ['Lloyd Banda', 'Commercial Partnerships', 'Builds the bridge between media audiences, brands and sustainable value.', 'team-partnerships.png'],
-            ['Thoko Mbewe', 'Product & Technology', 'Shapes the digital tools that make every draw transparent, accessible and easy to participate in.', 'team-product.png'],
-            ['Patrick Manda', 'Community & Audience', 'Listens to the people behind the numbers and turns insight into better media games.', 'team-community.png'],
+            [
+                'Kobbina Awuah',
+                'Co-Founder',
+                'Co-founded REL to bring gaming products to a new audience through radio and television.',
+                implode("\n", [
+                    'Over 10 years of strategic and management experience in Sub-Saharan African markets',
+                    'Co-founded Radio Entertainment Limited to bring gaming products to a new demographic and create new revenue streams for media houses',
+                    'Co-founded Peak Investment Capital (PIC), an Africa-focused search fund',
+                    'Previously Head of Strategy at Tigo Tanzania, leading strategy to drive growth outside Dar es Salaam',
+                    'MBA, Harvard Business School',
+                    'BSc Mechanical Engineering, Cornell University',
+                ]),
+                'kobbina-awuah.png',
+            ],
+            [
+                'Ike Kyei',
+                'Leadership team',
+                'Strategy and operations leader with a consulting background across Africa.',
+                implode("\n", [
+                    '8+ years of experience in strategy and operations',
+                    'Previously a consultant at McKinsey & Company, focusing on financial services, telecoms and the public sector, serving clients across Africa',
+                    'Earlier at Ford Motor Company, Dearborn, Michigan, USA (operations and Six Sigma analysis)',
+                    'MBA, Harvard Business School',
+                    'BSc Chemical Engineering, Massachusetts Institute of Technology',
+                ]),
+                'ike-kyei.png',
+            ],
+            [
+                'Michael Kampani',
+                'Leadership team',
+                'Chartered Accountant with senior finance and management roles across Africa.',
+                implode("\n", [
+                    'Chartered Accountant, CA (Mw) and ACMA/CGMA',
+                    'BCom (Accounting), University of Malawi',
+                    'Founder and CEO, Atlanto Security Limited (2022 to date)',
+                    'Regional Finance Director Africa, GardaWorld (2017-2022)',
+                    'Managing Director, G4S Botswana (2013-2017)',
+                    'Regional Financial Controller Africa, G4S Africa (2011-2013)',
+                    'Finance Director, G4S Botswana (2006-2011)',
+                    'Chief Accountant, G4S Malawi (1999-2006)',
+                ]),
+                'michael-kampani.png',
+            ],
         ];
 
-        foreach ($team as $index => [$name, $role, $bio, $photo]) {
-            $member = TeamMember::query()->updateOrCreate(
-                ['name' => $name],
-                ['role' => $role, 'bio' => $bio, 'sort_order' => $index + 1, 'is_published' => true],
-            );
+        foreach ($team as $index => [$name, $role, $summary, $bio, $photo]) {
+            $member = TeamMember::query()->firstOrNew(['name' => $name]);
+
+            // Only fill a record we are creating or that has never been given a summary,
+            // so edits made in the CMS are not overwritten on re-seed.
+            if (! $member->exists) {
+                $member->fill([
+                    'role' => $role,
+                    'summary' => $summary,
+                    'bio' => $bio,
+                    'sort_order' => $index + 1,
+                    'is_published' => true,
+                ])->save();
+            } elseif ($member->summary === null) {
+                $member->update(['summary' => $summary]);
+            }
 
             $this->attachOnce($member, 'photo', self::PHOTOS.'/'.$photo);
         }
@@ -60,27 +103,28 @@ class PeoplePartnershipsSeeder extends Seeder
     private function seedPartners(): void
     {
         $partners = [
-            ['MBC TV 1', PartnerType::Television, 'mbc_tv1_logo.png'],
-            ['MBC Radio 2', PartnerType::Radio, 'radio2_logo.png'],
-            ['MBC TV 2', PartnerType::Television, 'mbc2_tv_logo.png'],
-            ['Zodiak', PartnerType::RadioAndTelevision, 'zodiak_logo.png'],
-            ['Times 360', PartnerType::RadioAndTelevision, 'times_logo.png'],
-            ['Timveni', PartnerType::RadioAndTelevision, 'timveni_logo.png'],
-            ['Angaliba TV/FM', PartnerType::RadioAndTelevision, 'angaliba_logo.png'],
+            ['MBC TV 1', PartnerType::Television, public_path('images/partners/mbc_tv1_logo.png')],
+            ['MBC Radio 2', PartnerType::Radio, public_path('images/partners/radio2_logo.png')],
+            ['MBC TV 2', PartnerType::Television, public_path('images/partners/mbc2_tv_logo.png')],
+            ['Zodiak', PartnerType::RadioAndTelevision, public_path('images/partners/zodiak_logo.png')],
+            ['Times 360', PartnerType::RadioAndTelevision, public_path('images/partners/times_logo.png')],
+            ['Timveni', PartnerType::RadioAndTelevision, public_path('images/partners/timveni_logo.png')],
+            ['Angaliba TV/FM', PartnerType::RadioAndTelevision, public_path('images/partners/angaliba_logo.png')],
+            ['Airtel Money', PartnerType::MobileMoney, self::PARTNER_LOGOS.'/airtel_money.png'],
+            ['TNM Mpamba', PartnerType::MobileMoney, self::PARTNER_LOGOS.'/tnm_mpamba.png'],
         ];
 
         // Partners dropped because no confident logo could be sourced; removed from existing databases.
         Partner::query()->whereIn('name', ['Jojo FM', 'Mibawa TV', 'Ntchisi Youth FM'])->get()->each->delete();
 
         foreach ($partners as $index => [$name, $type, $logo]) {
-            $partner = Partner::query()->updateOrCreate(
-                ['name' => $name],
-                ['type' => $type, 'sort_order' => $index + 1, 'is_published' => true],
-            );
+            $partner = Partner::query()->firstOrNew(['name' => $name]);
 
-            if ($logo !== null) {
-                $this->attachOnce($partner, 'logo', public_path('images/partners/'.$logo));
+            if (! $partner->exists) {
+                $partner->fill(['type' => $type, 'sort_order' => $index + 1, 'is_published' => true])->save();
             }
+
+            $this->attachOnce($partner, 'logo', $logo);
         }
     }
 

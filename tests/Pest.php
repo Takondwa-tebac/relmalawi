@@ -1,7 +1,30 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
+
+/*
+|--------------------------------------------------------------------------
+| Parallel test isolation
+|--------------------------------------------------------------------------
+|
+| `php artisan test --parallel` runs several worker processes. Each one needs its
+| own compiled-Blade directory, otherwise Windows reports "rename ... Access is
+| denied" when two workers compile the same view. The in-memory SQLite database
+| is already per process, and Storage::fake() below is per worker too.
+|
+*/
+if (($token = getenv('TEST_TOKEN')) !== false && $token !== '') {
+    $viewPath = dirname(__DIR__).'/storage/framework/views/testing-'.$token;
+
+    if (! is_dir($viewPath)) {
+        mkdir($viewPath, 0777, true);
+    }
+
+    putenv('VIEW_COMPILED_PATH='.$viewPath);
+    $_ENV['VIEW_COMPILED_PATH'] = $_SERVER['VIEW_COMPILED_PATH'] = $viewPath;
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +39,8 @@ use Tests\TestCase;
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
+    // Never let tests write uploads/conversions into the real storage/app/public.
+    ->beforeEach(fn () => Storage::fake('public'))
     ->in('Feature');
 
 /*

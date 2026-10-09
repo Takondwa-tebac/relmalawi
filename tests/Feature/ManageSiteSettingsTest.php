@@ -29,7 +29,7 @@ function validSettings(array $overrides = []): array
 it('renders for a super-admin with defaults', function () {
     Livewire::test(ManageSiteSettings::class)
         ->assertOk()
-        ->assertFormSet(['contact_email' => 'hello@relmw.com', 'codes_count' => '40']);
+        ->assertFormSet(['contact_email' => 'hello@relmalawi.com', 'codes_count' => '40']);
 });
 
 it('saves settings and shares them on the next request', function () {

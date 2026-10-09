@@ -20,6 +20,15 @@ enum FeatureIcon: string
     case FileCheck = 'file-check';
     case Scale = 'scale';
     case CheckCircle = 'check-circle';
+    case Smartphone = 'smartphone';
+    case Wallet = 'wallet';
+    case Mic = 'mic';
+    case Users = 'users';
+    case Building = 'building';
+    case Handshake = 'handshake';
+    case Headset = 'headset';
+    case Ticket = 'ticket';
+    case Cog = 'cog';
 
     public function label(): string
     {
@@ -36,6 +45,15 @@ enum FeatureIcon: string
             self::FileCheck => 'File with check',
             self::Scale => 'Scale',
             self::CheckCircle => 'Check circle',
+            self::Smartphone => 'Smartphone',
+            self::Wallet => 'Wallet',
+            self::Mic => 'Microphone',
+            self::Users => 'People',
+            self::Building => 'Building',
+            self::Handshake => 'Handshake',
+            self::Headset => 'Headset',
+            self::Ticket => 'Ticket',
+            self::Cog => 'Cog',
         };
     }
 

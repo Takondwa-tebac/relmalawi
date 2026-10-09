@@ -54,6 +54,28 @@ class Partner extends Model implements HasMedia
         return $query->orderBy('sort_order')->orderBy('id');
     }
 
+    /**
+     * Radio and television partners (everything except mobile money).
+     *
+     * @param  Builder<Partner>  $query
+     * @return Builder<Partner>
+     */
+    public function scopeMedia(Builder $query): Builder
+    {
+        return $query->where('type', '!=', PartnerType::MobileMoney->value);
+    }
+
+    /**
+     * Mobile-money (payments) partners only.
+     *
+     * @param  Builder<Partner>  $query
+     * @return Builder<Partner>
+     */
+    public function scopeMobileMoney(Builder $query): Builder
+    {
+        return $query->where('type', PartnerType::MobileMoney->value);
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('logo')->singleFile();

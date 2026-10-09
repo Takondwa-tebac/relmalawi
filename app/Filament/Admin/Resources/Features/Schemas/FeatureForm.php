@@ -66,6 +66,29 @@ class FeatureForm
                             ->maxLength(255),
                         TextInput::make('meta.button_url')
                             ->maxLength(255),
+                        TextInput::make('meta.secondary_label')
+                            ->label('Second button label')
+                            ->maxLength(255),
+                        TextInput::make('meta.secondary_url')
+                            ->label('Second button URL')
+                            ->maxLength(255),
+                    ]),
+                Section::make('Page-specific extras (How it works, Raffles)')
+                    ->description('Bullets, short labels and captions used by the richer blocks.')
+                    ->columns(2)
+                    ->columnSpanFull()
+                    ->collapsed()
+                    ->schema([
+                        Textarea::make('meta.bullets')
+                            ->label('Bullet points (one per line)')
+                            ->rows(4)
+                            ->columnSpanFull(),
+                        TextInput::make('meta.best_for')
+                            ->label('"Best for" line')
+                            ->maxLength(255),
+                        TextInput::make('meta.caption')
+                            ->label('Visual caption')
+                            ->maxLength(255),
                     ]),
             ]);
     }

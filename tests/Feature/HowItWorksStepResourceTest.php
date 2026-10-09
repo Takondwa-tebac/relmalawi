@@ -24,11 +24,12 @@ it('creates a step at the end of the list', function () {
     HowItWorksStep::factory()->create(['sort_order' => 4]);
 
     Livewire::test(CreateHowItWorksStep::class)
-        ->fillForm(['title' => 'New step', 'body' => 'Body', 'icon' => 'trophy', 'is_published' => true])
+        ->fillForm(['title' => 'New step', 'body' => 'Body', 'detail' => 'More detail', 'icon' => 'trophy', 'is_published' => true])
         ->call('create')
         ->assertHasNoFormErrors();
 
-    expect(HowItWorksStep::where('title', 'New step')->first()->sort_order)->toBe(5);
+    $step = HowItWorksStep::where('title', 'New step')->first();
+    expect($step->sort_order)->toBe(5)->and($step->detail)->toBe('More detail');
 });
 
 it('requires a title', function () {

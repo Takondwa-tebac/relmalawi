@@ -25,6 +25,9 @@ class TeamMembersTable
                     ->searchable(),
                 TextColumn::make('role')
                     ->searchable(),
+                TextColumn::make('summary')
+                    ->limit(60)
+                    ->toggleable(),
                 ToggleColumn::make('is_published')
                     ->label('Published'),
                 TextColumn::make('sort_order')

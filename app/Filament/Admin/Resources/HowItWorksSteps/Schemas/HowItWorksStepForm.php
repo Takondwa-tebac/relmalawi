@@ -22,6 +22,11 @@ class HowItWorksStepForm
                     ->rows(4)
                     ->maxLength(1000)
                     ->columnSpanFull(),
+                Textarea::make('detail')
+                    ->label('Extra detail (optional second line)')
+                    ->rows(3)
+                    ->maxLength(1000)
+                    ->columnSpanFull(),
                 Select::make('icon')
                     ->options(HowItWorksStep::ICONS)
                     ->placeholder('No icon'),

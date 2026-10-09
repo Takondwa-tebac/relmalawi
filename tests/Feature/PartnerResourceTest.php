@@ -32,6 +32,15 @@ it('creates a partner', function () {
     expect(Partner::where('name', 'Radio Test')->first()->type)->toBe(PartnerType::Radio);
 });
 
+it('creates a mobile-money partner', function () {
+    Livewire::test(CreatePartner::class)
+        ->fillForm(['name' => 'Wallet Co', 'type' => PartnerType::MobileMoney->value, 'sort_order' => 1, 'is_published' => true])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    expect(Partner::where('name', 'Wallet Co')->first()->type)->toBe(PartnerType::MobileMoney);
+});
+
 it('requires a name and type', function () {
     Livewire::test(CreatePartner::class)
         ->fillForm(['name' => '', 'type' => null])

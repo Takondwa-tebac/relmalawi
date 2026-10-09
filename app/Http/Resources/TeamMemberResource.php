@@ -20,6 +20,7 @@ class TeamMemberResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'role' => $this->role,
+            'summary' => $this->summary,
             'bio' => $this->bio,
             'photo_url' => $this->getFirstMediaUrl('photo', 'card') ?: null,
         ];

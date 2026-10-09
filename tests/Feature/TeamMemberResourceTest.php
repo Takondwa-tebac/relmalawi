@@ -24,11 +24,11 @@ it('lists team members', function () {
 
 it('creates a team member', function () {
     Livewire::test(CreateTeamMember::class)
-        ->fillForm(['name' => 'Jane Doe', 'role' => 'Producer', 'bio' => 'Bio', 'sort_order' => 5, 'is_published' => true])
+        ->fillForm(['name' => 'Jane Doe', 'role' => 'Producer', 'summary' => 'Headline', 'bio' => 'Bio', 'sort_order' => 5, 'is_published' => true])
         ->call('create')
         ->assertHasNoFormErrors();
 
-    expect(TeamMember::where('name', 'Jane Doe')->exists())->toBeTrue();
+    expect(TeamMember::where('name', 'Jane Doe')->first()->summary)->toBe('Headline');
 });
 
 it('validates required fields on create', function () {

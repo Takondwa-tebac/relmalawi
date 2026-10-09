@@ -4,5 +4,6 @@ export type HowItWorksStepData = {
     number: string;
     title: string;
     body: string | null;
+    detail: string | null;
     icon: string | null;
 };

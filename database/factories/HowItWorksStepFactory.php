@@ -15,6 +15,7 @@ class HowItWorksStepFactory extends Factory
         return [
             'title' => fake()->words(3, true),
             'body' => fake()->sentence(),
+            'detail' => null,
             'icon' => fake()->randomElement(array_keys(HowItWorksStep::ICONS)),
             'sort_order' => fake()->unique()->numberBetween(1, 10000),
             'is_published' => true,

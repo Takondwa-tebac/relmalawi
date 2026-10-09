@@ -3,6 +3,7 @@
 use App\Filament\Admin\Pages\ManageSiteSettings;
 use App\Filament\Admin\Resources\Campaigns\CampaignResource;
 use App\Filament\Admin\Resources\ContactMessages\ContactMessageResource;
+use App\Filament\Admin\Resources\Faqs\FaqResource;
 use App\Filament\Admin\Resources\Features\FeatureResource;
 use App\Filament\Admin\Resources\HowItWorksSteps\HowItWorksStepResource;
 use App\Filament\Admin\Resources\Pages\PageResource;
@@ -13,6 +14,7 @@ use App\Filament\Admin\Resources\TeamMembers\TeamMemberResource;
 use App\Filament\Admin\Resources\Users\UserResource;
 use App\Models\Campaign;
 use App\Models\ContactMessage;
+use App\Models\Faq;
 use App\Models\Feature;
 use App\Models\HowItWorksStep;
 use App\Models\Page;
@@ -40,6 +42,7 @@ dataset('resources', [
     'stats' => [StatResource::class, Stat::class, 200, 200, 200],
     'team members' => [TeamMemberResource::class, TeamMember::class, 200, 200, 200],
     'partners' => [PartnerResource::class, Partner::class, 200, 200, 200],
+    'faqs' => [FaqResource::class, Faq::class, 200, 200, 200],
     'features' => [FeatureResource::class, Feature::class, 200, 200, 200],
     'how it works steps' => [HowItWorksStepResource::class, HowItWorksStep::class, 200, 200, 200],
     'pages' => [PageResource::class, Page::class, 200, 403, 200],
@@ -63,30 +66,60 @@ function editUrl(string $resource, object $record): string
     return $resource::getUrl($resource === ContactMessageResource::class ? 'view' : 'edit', ['record' => $record]);
 }
 
-it('lets an editor reach only what they are permitted', function (string $resource, string $model, int $index, ?int $create, int $edit) {
+/*
+ * The permission matrix is asserted through the same static checks Filament uses to
+ * guard its pages (Resource::canViewAny/canCreate/canEdit/canView). That is exactly
+ * what decides 200 vs 403, without rendering three full admin pages per case, which
+ * made this file the slowest in the suite. The HTTP tests further down confirm the
+ * pages really are wired to those checks, for both roles.
+ */
+it('lets an editor do only what they are permitted', function (string $resource, string $model, int $index, ?int $create, int $edit) {
     $this->actingAs(User::factory()->create()->assignRole('editor'));
     $record = recordFor($model, $resource);
 
-    $this->get($resource::getUrl('index'))->assertStatus($index);
+    expect($resource::canViewAny())->toBe($index === 200);
 
     if ($create !== null) {
-        $this->get($resource::getUrl('create'))->assertStatus($create);
+        expect($resource::canCreate())->toBe($create === 200);
     }
 
-    $this->get(editUrl($resource, $record))->assertStatus($edit);
+    // Contact messages are view-only in the panel; every other resource has an edit page.
+    $canOpen = $resource === ContactMessageResource::class ? $resource::canView($record) : $resource::canEdit($record);
+    expect($canOpen)->toBe($edit === 200);
 })->with('resources');
 
-it('lets a super-admin reach every resource', function (string $resource, string $model) {
+it('lets a super-admin do everything on every resource', function (string $resource, string $model) {
     $this->actingAs(User::factory()->create()->assignRole('super-admin'));
     $record = recordFor($model, $resource);
 
-    $this->get($resource::getUrl('index'))->assertOk();
-    $this->get(editUrl($resource, $record))->assertOk();
+    expect($resource::canViewAny())->toBeTrue();
 
-    if ($resource !== ContactMessageResource::class) {
-        $this->get($resource::getUrl('create'))->assertOk();
+    if ($resource === ContactMessageResource::class) {
+        expect($resource::canView($record))->toBeTrue();
+    } else {
+        expect($resource::canCreate())->toBeTrue()
+            ->and($resource::canEdit($record))->toBeTrue();
     }
 })->with('resources');
+
+it('serves and blocks real panel pages according to the role', function () {
+    $campaign = Campaign::factory()->create();
+
+    // Editor: allowed content pages load, restricted ones are forbidden.
+    $this->actingAs(User::factory()->create()->assignRole('editor'));
+    $this->get(CampaignResource::getUrl('index'))->assertOk();
+    $this->get(CampaignResource::getUrl('create'))->assertOk();
+    $this->get(CampaignResource::getUrl('edit', ['record' => $campaign]))->assertOk();
+    $this->get(PageResource::getUrl('create'))->assertForbidden();
+    $this->get(UserResource::getUrl('index'))->assertForbidden();
+    $this->get(RoleResource::getUrl('index'))->assertForbidden();
+
+    // Super-admin: everything loads.
+    $this->actingAs(User::factory()->create()->assignRole('super-admin'));
+    $this->get(UserResource::getUrl('index'))->assertOk();
+    $this->get(RoleResource::getUrl('index'))->assertOk();
+    $this->get(PageResource::getUrl('create'))->assertOk();
+});
 
 it('restricts site settings to those with the permission', function () {
     $this->actingAs(User::factory()->create()->assignRole('editor'));

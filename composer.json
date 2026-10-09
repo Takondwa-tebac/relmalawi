@@ -74,6 +74,10 @@
         "types:check": [
             "phpstan analyse"
         ],
+        "test:fast": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php artisan test --parallel --processes=6 --compact"
+        ],
         "test": [
             "@php artisan config:clear --ansi",
             "@lint:check",
